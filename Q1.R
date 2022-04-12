@@ -2,6 +2,7 @@
 
 #install.packages("rvest")
 #install.packages("lubridate")
+#install.packages("tidyquant")
 
 library(rvest)
 library(tidyquant)
@@ -20,6 +21,8 @@ replace_url = function(name){
   return(gsub('#',name,profile_url))
 }
 get_company_data = function(name){
+  # Capturar principais informações da empresa
+  
   company_data = list()
   
   #replace na url, add ticker
@@ -72,17 +75,19 @@ get_company_data = function(name){
     Industry=industry,
     Employers=employers
   ))
-  return(company_data)
+  return(data.frame(company_data))
 }
 
 get_employers = function(name){
-  #replace na url, add ticker
+  # Capturar lista de pricipais funcionários do tickers
+  
+  # replace na url, add ticker
   fpurl = replace_url(name)
   #Key Executives
   employers = read_html(fpurl) %>%
     html_element("table") %>%
     html_table()
-  return(employers$Name)
+  return(data.frame(key_employers = employers$Name))
 }
 stock_prices_ticker = function(ticker){
   #Calculando 200 dias anteriores a hoje
@@ -91,6 +96,8 @@ stock_prices_ticker = function(ticker){
 }
 
 get_lastday_month_price = function(ticker){
+  # Preço fechamento do último dia do mês 200 dias anteriores
+  
   table = stock_prices_ticker(ticker)
   xd = table$date[1]
   n = length(table$date)
@@ -114,27 +121,19 @@ get_lastday_month_price = function(ticker){
   return(data.frame(filtered_data))
 }
 
-#get_company_data(tickers[1])
-#get_employers(tickers[1])
-#filtered_data = get_lastday_month_price(tickers[1])
+#iget_company_data(tickers[1])
+#info = get_employers(tickers[1])
+# filtered_data = get_lastday_month_price(tickers[1])
 
-name = tickers[1]
-filtered_data = get_lastday_month_price(name)
-
-# g = ggplot(filtered_data,aes(x=date,y=close)) +
-#     geom_line()+
-#     ggtitle(paste("Fechamento Diários:",name), subtitle="Fechamento do último dia do mês") +
-#     xlab("Date") +
-#     ylab("Close")
-# plot(g)
-par(mfrow=c(1,2))
-plot(x = filtered_data$date,y = filtered_data$close,
-     type = "b",
-     main = paste("Fechamento Último dia do mês:",name),
-     xlab = "Data",
-     ylab = "Preço fechamento")
-plot(x = filtered_data$date,y = filtered_data$volume,
-     type = "b",
-     main = paste("Volume último dia do mês:",name),
-     xlab = "Data",
-     ylab = "Preço volume")
+# Plotagem dos preços de fechamento de cada ação 
+# par(mfrow=c(2,3))
+# for(ticker in tickers){
+#   filtered_data = get_lastday_month_price(ticker)
+#   
+#   plot(x = filtered_data$date,y = filtered_data$close,
+#        type = "b",
+#        main = paste("Fechamento Último dia do mês:",ticker),
+#        xlab = "Data",
+#        ylab = "Preço fechamento")
+# }
+#print(info)

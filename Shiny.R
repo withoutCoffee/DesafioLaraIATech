@@ -7,23 +7,58 @@
 # 
 # install.packages("shiny")
 library(shiny)
+source("Q1.R")
 
 ui = fluidPage(
-  selectInput("dataset",label="Dataset",choice = ls("package:datasets")),
-  verbatimTextOutput("summary"),
-  plotOutput("plot",width="400px"),
-  tableOutput("table")
+  titlePanel("DASHBOARD FINANCEIRO"),
+  textInput("ticker","Nome do ticker"),
+  actionButton("goButton", "Go!", class = "btn-success"),
+  
+  hr(),
+  tableOutput("info"),
+  fluidRow(
+    column(6,
+           plotOutput("plot_close")
+    ),
+    column(6,
+           plotOutput("plot_volume")
+    )
+  ),
+  tableOutput("key_emps")
 )
 
 server = function(input, output, session){
-  output$summary = renderPrint({
-    dataset = get(input$dataset, "package:datasets")
-    summary(dataset)
+  prices = reactiveValues(data = 0)
+  
+  info = reactiveValues(data = NULL)
+  emp = reactiveValues(data = NULL)
+  
+  observeEvent(input$goButton,{
+    prices$data = get_lastday_month_price(input$ticker)
+    info$data = get_company_data(input$ticker)
+    emp$data = get_employers(input$ticker)
   })
-  output$table = renderTable({
-    dataset = get(input$dataset, "package:datasets")
-    dataset
+  
+  output$plot_close = renderPlot({
+    if(prices$data == 0){
+      return(0)
+    }
+    plot(prices$data$date,prices$data$close)
   })
-  output$plot = renderPlot(plot(get(input$dataset,"package:datasets")))
+  output$plot_volume = renderPlot({
+    if(prices$data == 0){
+      return(0)
+    }
+    plot(prices$data$date,prices$data$volume)
+  })
+  
+  output$info = renderTable({
+    info$data
+  })
+  
+  output$key_emps = renderTable({
+    emp$data
+  })
+  
 }
 shinyApp(ui,server)
