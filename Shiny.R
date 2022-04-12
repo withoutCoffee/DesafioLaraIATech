@@ -10,6 +10,8 @@ library(shiny)
 source("Q1.R")
 
 ui = fluidPage(
+  theme = bslib::bs_theme(bootswatch = "flatly"),
+  
   titlePanel("DASHBOARD FINANCEIRO"),
   textInput("ticker","Nome do ticker"),
   actionButton("goButton", "Go!", class = "btn-success"),
@@ -18,9 +20,11 @@ ui = fluidPage(
   tableOutput("info"),
   fluidRow(
     column(6,
+           textOutput("text1"),
            plotOutput("plot_close")
     ),
     column(6,
+           textOutput("text2"),
            plotOutput("plot_volume")
     )
   ),
@@ -43,13 +47,33 @@ server = function(input, output, session){
     if(prices$data == 0){
       return(0)
     }
-    plot(prices$data$date,prices$data$close)
+    output$text1 = renderText({
+      "Preço fechamento último dia do mês ao longo do tempo"
+    })
+    
+    ggplot(prices$data,aes(x=date,y=close)) +
+      geom_point(color="blue") +
+      geom_line(color="black") + 
+      labs(
+        x = "Data",
+        y = "Valor Fechamento ($)"
+      )
+    
   })
+  
   output$plot_volume = renderPlot({
     if(prices$data == 0){
       return(0)
     }
-    plot(prices$data$date,prices$data$volume)
+    output$text2 = renderText({"Volume de ações vendidas do último dia de cada mês"})
+    
+    ggplot(prices$data,aes(x=date,y=volume)) +
+      geom_point(color="blue") +
+      geom_line(colo="black")+
+      labs(
+        x = "Data",
+        y = "Volume"
+      )
   })
   
   output$info = renderTable({
