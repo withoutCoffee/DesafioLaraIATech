@@ -121,19 +121,21 @@ get_lastday_month_price = function(ticker){
   return(data.frame(filtered_data))
 }
 
-#iget_company_data(tickers[1])
-#info = get_employers(tickers[1])
-# filtered_data = get_lastday_month_price(tickers[1])
+#get_company_data(tickers[1])
 
-# Plotagem dos preços de fechamento de cada ação 
+
+# Plotagem dos preços de fechamento de cada ação
 # par(mfrow=c(2,3))
 # for(ticker in tickers){
 #   filtered_data = get_lastday_month_price(ticker)
-#   
+# 
 #   plot(x = filtered_data$date,y = filtered_data$close,
 #        type = "b",
 #        main = paste("Fechamento Último dia do mês:",ticker),
 #        xlab = "Data",
 #        ylab = "Preço fechamento")
+#   # info = get_employers(ticker)
+#   # print(get_company_data(ticker))
+#   # print(info)
 # }
-#print(info)
+

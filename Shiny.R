@@ -7,7 +7,7 @@
 # 
 # install.packages("shiny")
 library(shiny)
-source("Q1.R")
+source("handle_data.R")
 
 ui = fluidPage(
   theme = bslib::bs_theme(bootswatch = "flatly"),
