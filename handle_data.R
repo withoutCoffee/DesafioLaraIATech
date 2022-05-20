@@ -2,6 +2,7 @@
 
 #install.packages("rvest")
 #install.packages("lubridate")
+#install.packages("quantmod")
 #install.packages("tidyquant")
 
 library(rvest)
@@ -91,7 +92,7 @@ get_employers = function(name){
 }
 stock_prices_ticker = function(ticker){
   #Calculando 200 dias anteriores a hoje
-  s_prices = tq_get(ticker,get="stock.prices",from=today()-201,to=today()-1)
+  s_prices = tq_get(ticker,get = "stock.prices",from=today()-201,to=today()-1)
   return (s_prices)
 }
 
@@ -128,14 +129,14 @@ get_lastday_month_price = function(ticker){
 # par(mfrow=c(2,3))
 # for(ticker in tickers){
 #   filtered_data = get_lastday_month_price(ticker)
-# 
-#   plot(x = filtered_data$date,y = filtered_data$close,
-#        type = "b",
-#        main = paste("Fechamento Último dia do mês:",ticker),
-#        xlab = "Data",
-#        ylab = "Preço fechamento")
-#   # info = get_employers(ticker)
-#   # print(get_company_data(ticker))
-#   # print(info)
+#   print(filtered_data)
+#   # plot(x = filtered_data$date,y = filtered_data$close,
+#   #      type = "b",
+#   #      main = paste("Fechamento Último dia do mês:",ticker),
+#   #      xlab = "Data",
+#   #      ylab = "Preço fechamento")
+#   info = get_employers(ticker)
+#   print(get_company_data(ticker))
+#   print(info)
 # }
 
